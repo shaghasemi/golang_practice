@@ -1,46 +1,77 @@
 package main
 
 import (
-	"bufio"
-	"fmt"
-	"os"
+	"math"
 	"strconv"
-	"strings"
 )
 
-func main() {
-	fmt.Printf("\n")
-	scanner := bufio.NewScanner(os.Stdin)
+type FilterFunc func(int) bool
+type MapperFunc func(int) int
 
-	var codes map[string]string
+func IsSquare(x int) bool {
+	sqrt := math.Sqrt(float64(x))
+	if sqrt == math.Trunc(sqrt) {
+		return true
+	}
+	return false
+}
 
-	scanner.Scan()
-	numberOfCountries, _ := strconv.Atoi(scanner.Text())
+func IsPalindrome(x int) bool {
 
-	codes = make(map[string]string)
-
-	for i := 0; i < numberOfCountries; i++ {
-		scanner.Scan()
-		content := scanner.Text()
-		parts := strings.Fields(content)
-		codes[parts[1]] = parts[0]
+	if x < 0 {
+		return false
 	}
 
-	var callCountries []string
+	var stringifiedNumber string
+	var lengthOfNumber int
 
-	scanner.Scan()
-	numberOfCalls, _ := strconv.Atoi(scanner.Text())
+	stringifiedNumber = strconv.Itoa(x)
+	lengthOfNumber = len(stringifiedNumber)
 
-	callCountries = make([]string, numberOfCalls)
-
-	for j := range numberOfCalls {
-		scanner.Scan()
-		callNumber := (scanner.Text())[0:3]
-		a, ok := codes[callNumber]
-		if ok {
-			callCountries[j] = a
-		} else {
-			callCountries[j] = "Invalid Number"
+	for i := 0; i < lengthOfNumber/2; i++ {
+		if stringifiedNumber[i] != stringifiedNumber[lengthOfNumber-i-1] {
+			return false
 		}
 	}
+
+	return true
+}
+
+func Abs(num int) int {
+	if num < 0 {
+		return -num
+	}
+	return num
+}
+
+func Cube(num int) int {
+	return num * num * num
+}
+
+func Filter(input []int, f FilterFunc) []int {
+	var result []int
+	// for i := 0; i < len(input); i++ {
+	// 	if f(input[i]) {
+	// 		result = append(result, input[i])
+	// 	}
+	// }
+
+	for _, value := range input {
+		if f(value) {
+			result = append(result, value)
+		}
+	}
+
+	return result
+}
+
+func Map(input []int, m MapperFunc) []int {
+	// var result []int
+	result := make([]int, 0, len(input))
+
+	for _, value := range input {
+		result = append(result, m(value))
+	}
+
+	return result
 }
