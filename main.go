@@ -1,5 +1,7 @@
 package main
 
+import "fmt"
+
 type Car struct {
 	speed   int
 	battery int
@@ -18,12 +20,18 @@ func GetBattery(car *Car) int {
 }
 
 func ChargeCar(car *Car, minutes int) {
+	if minutes <= 0 {
+		return
+	}
+
 	if car.battery >= 100 {
 		return
 	}
+
 	var chargeAdded int
-	chargeAdded = minutes % 2
+	chargeAdded = minutes / 2
 	car.battery = car.battery + chargeAdded
+
 	if car.battery > 100 {
 		car.battery = 100
 	}
@@ -34,18 +42,15 @@ func TryFinish(car *Car, distance int) string {
 		return "0.00"
 	}
 
-	var chargeDrained int
-	chargeDrained = distance % 2
+	chargeDrained := distance / 2
 
-	car.battery = car.battery - chargeDrained
-
-	if car.battery < 0 {
+	if chargeDrained > car.battery {
 		car.battery = 0
 		return ""
 	}
+	car.battery -= chargeDrained
 
-	var timeElapsed float32
-	timeElapsed = distance / car.speed
+	timeElapsed := float64(distance) / float64(car.speed)
 
-	return float32(timeElapsed)
+	return fmt.Sprintf("%.2f", timeElapsed)
 }
